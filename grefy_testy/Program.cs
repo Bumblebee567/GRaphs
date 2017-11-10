@@ -22,6 +22,15 @@ namespace grefy_testy
             return $"x: {X} y: {Y}";
         }
     }
+    class Point
+    {
+        public int Id;
+        public Point ConnectedPoint;
+        public Point(int id)
+        {
+            Id = id;
+        }
+    }
     class Edge
     {
         public Vertex StartPoint { get; set; }
