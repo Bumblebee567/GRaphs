@@ -31,6 +31,10 @@ namespace grefy_testy
             Id = id;
         }
     }
+    class Bucket
+    {
+        public List<Point> Points = new List<Point>();
+    }
     class Edge
     {
         public Vertex StartPoint { get; set; }
@@ -150,6 +154,15 @@ namespace grefy_testy
                 }
             }
             return matrix;
+        }
+        public static GenerateEdgesOfRegularGraph(int numOfVertices, int degree)
+        {
+            int indexer = 0;
+            Bucket[] pointsContainer = new Bucket[numOfVertices];
+            foreach (var container in pointsContainer)
+            {
+                
+            }
         }
         public static void ShowMatrix(int[,] matrix)
         {
