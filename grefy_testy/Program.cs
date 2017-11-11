@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,6 +27,7 @@ namespace grefy_testy
     {
         public int Id;
         public Point ConnectedPoint;
+        public bool IsConnected;
         public Point(int id)
         {
             Id = id;
@@ -166,8 +168,10 @@ namespace grefy_testy
         static IEnumerable<int> range;
         static bool checker = false;
         HashSet<int> excludeBucketIndex = new HashSet<int>();
+        static Stopwatch sw = new Stopwatch();
         public void GenerateEdgesOfRegularGraph(int numOfVertices, int degree)
         {
+            int numberOfEdges = (numOfVertices * degree) / 2;
             range = Enumerable.Range(0, degree);
             Bucket[] pointsContainer = new Bucket[numOfVertices];
             for (int i = 0; i < pointsContainer.Length; i++)
@@ -186,47 +190,77 @@ namespace grefy_testy
             //kontenery z punktami zrobione
             foreach (var container in pointsContainer)
             {
+                Console.WriteLine("Kontener: {0}", container.Id);
                 for (int i = 0; i < degree; i++)
                 {
-                    if (container.Points[i].ConnectedPoint != null)
+                    if (container.Points[i].IsConnected == true)
                     {
-                        Console.WriteLine("jest już połączony");
+                        Console.WriteLine("Punkt {0} w koszyku {1} jest już połączony", container.Points[i].Id, Array.IndexOf(pointsContainer, container));
                         continue;
                     }
                     else
                     {
                         while (checker != true)
                         {
-                            Console.WriteLine("sprawdzam czy koszyk nie zawiera");
+                            Console.WriteLine("Punkt {0} w koszyku {1} nie jest połączony", container.Points[i].Id, Array.IndexOf(pointsContainer, container));
+                            //Console.ReadKey();
                             excludeBucketIndex.Add(Array.IndexOf(pointsContainer, container));
                             range = Enumerable.Range(0, numOfVertices - 1).Where(x => !excludeBucketIndex.Contains(x));
-                            index = rnd.Next(0, (numOfVertices - 1) - 1); //index losowego koszyka, różnego od obecnego
-                            if (pointsContainer[index].ConnectedBuckets.Contains(container))
+                            index = rnd.Next(0, numOfVertices); //index losowego koszyka, różnego od obecnego
+                            Console.WriteLine("wylosowany index kontenera: {0}", index);
+                            if (index == container.Id)
                             {
+                                Console.WriteLine("wylosowano taki sam kontener jak obecny");
                                 checker = false;
+                            }
+                            else if (pointsContainer[index].Points.All(x => x.IsConnected == true))
+                            {
+                                Console.WriteLine("wszystkie punkty w wylosowanym kontenerze są już połączone");
                             }
                             else
                             {
-                                checker = true;
-                                break;
+                                if (pointsContainer[index].ConnectedBuckets.Contains(container))
+                                {
+                                    checker = false;
+                                }
+                                else
+                                {
+                                    checker = true;
+                                }
                             }
                         }
+                        checker = false;
                         while (checker != true)
                         {
+                            Console.WriteLine("Szukam punktu do połączenia");
                             pointToConnect = rnd.Next(pointsContainer[index].Points.Count);
-                            if (pointsContainer[index].Points[pointToConnect].ConnectedPoint != null)
+                            Console.WriteLine("wylosowany punkt do połączenia: {0}", pointsContainer[index].Points[pointToConnect].Id);
+                            if (pointsContainer[index].Points[pointToConnect].IsConnected == true)
                             {
+                                Console.WriteLine("Wylosowany punkt jest już połączony");
                                 checker = false;
                             }
                             else
                             {
-                                break;
+                                container.Points[i].IsConnected = true;
+                                pointsContainer[index].Points[pointToConnect].IsConnected = true;
+                                if (pointsContainer[index].Points[pointToConnect].ConnectedPoint != null)
+                                {
+                                    checker = false;
+                                }
+                                else
+                                {
+                                    checker = true;
+                                }
                             }
                         }
+                        checker = false;
                         container.Points[i].ConnectedPoint = pointsContainer[index].Points[pointToConnect];
                         pointsContainer[index].Points[pointToConnect] = container.Points[i].ConnectedPoint;
                         container.ConnectedBuckets.Add(pointsContainer[index]);
                         pointsContainer[index].ConnectedBuckets.Add(container);
+                        //dopisać metody: 1. sprawdzająca, czy można się połączyć z JAKIMKOLWIEK bucketem (przez to się sypie)
+                        //                2. poprawić generowanie krawędzi - źle działa (niepoprawna ilość)
                     }
                 }
             }
@@ -237,21 +271,20 @@ namespace grefy_testy
                 {
                     indexesOfConnectedVertices.Add(bucket.Id);
                 }
-                //for (int i = 0; i < indexesOfConnectedVertices.Count; i++)
-                //{
-                //    ListOfEdges.Add(new Edge
-                //    {
-                //        StartPoint = ListOfVertices[container.Id],
-                //        EndPoint = ListOfVertices[indexesOfConnectedVertices[i]]
-                //    });
-                //}
                 foreach (var item in indexesOfConnectedVertices)
                 {
-                    ListOfEdges.Add(new Edge
+                    try
                     {
-                        StartPoint = ListOfVertices[container.Id],
-                        EndPoint = ListOfVertices[item]
-                    });
+                        ListOfEdges.Add(new Edge
+                        {
+                            StartPoint = ListOfVertices[container.Id],
+                            EndPoint = ListOfVertices[item]
+                        });
+                    }
+                    catch (Exception e)
+                    {
+                        
+                    }
                 }
                 indexesOfConnectedVertices.Clear();
             }
@@ -296,6 +329,8 @@ namespace grefy_testy
     {
         static void Main(string[] args)
         {
+            var sw = new Stopwatch();
+            sw.Start();
             var g1 = Graph.GenerateGraph(10);
             //Console.WriteLine(g1);
             //var g = g1.GenerateMatrix(5);
@@ -303,8 +338,10 @@ namespace grefy_testy
             //Graph.ShowMatrix(g);
             //Console.WriteLine();
             //g1.GenerateEdges(g);
-            g1.GenerateEdgesOfRegularGraph(4, 2);
+            g1.GenerateEdgesOfRegularGraph(30, 4);
             g1.ShowEdges();
+            sw.Stop();
+            Console.WriteLine(sw.ElapsedMilliseconds);
         }
     }
 }
