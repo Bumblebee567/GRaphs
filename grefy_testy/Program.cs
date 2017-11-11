@@ -30,10 +30,16 @@ namespace grefy_testy
         {
             Id = id;
         }
+        public Point()
+        {
+        }
     }
     class Bucket
     {
+        public int Id;
         public List<Point> Points = new List<Point>();
+        //public int[] ConnectedBuckets;
+        public List<Bucket> ConnectedBuckets = new List<Bucket>();
     }
     class Edge
     {
@@ -155,13 +161,99 @@ namespace grefy_testy
             }
             return matrix;
         }
-        public static GenerateEdgesOfRegularGraph(int numOfVertices, int degree)
+        static int index;
+        static int pointToConnect;
+        static IEnumerable<int> range;
+        static bool checker = false;
+        HashSet<int> excludeBucketIndex = new HashSet<int>();
+        public void GenerateEdgesOfRegularGraph(int numOfVertices, int degree)
         {
-            int indexer = 0;
+            range = Enumerable.Range(0, degree);
             Bucket[] pointsContainer = new Bucket[numOfVertices];
+            for (int i = 0; i < pointsContainer.Length; i++)
+            {
+                pointsContainer[i] = new Bucket();
+                pointsContainer[i].Id = i;
+            }
+
+            for (int i = 0; i < pointsContainer.Length; i++)
+            {
+                for (int j = 0; j < degree; j++)
+                {
+                    pointsContainer[i].Points.Add(new Point((i * degree) + j));
+                }
+            }
+            //kontenery z punktami zrobione
             foreach (var container in pointsContainer)
             {
-                
+                for (int i = 0; i < degree; i++)
+                {
+                    if (container.Points[i].ConnectedPoint != null)
+                    {
+                        Console.WriteLine("jest już połączony");
+                        continue;
+                    }
+                    else
+                    {
+                        while (checker != true)
+                        {
+                            Console.WriteLine("sprawdzam czy koszyk nie zawiera");
+                            excludeBucketIndex.Add(Array.IndexOf(pointsContainer, container));
+                            range = Enumerable.Range(0, numOfVertices - 1).Where(x => !excludeBucketIndex.Contains(x));
+                            index = rnd.Next(0, (numOfVertices - 1) - 1); //index losowego koszyka, różnego od obecnego
+                            if (pointsContainer[index].ConnectedBuckets.Contains(container))
+                            {
+                                checker = false;
+                            }
+                            else
+                            {
+                                checker = true;
+                                break;
+                            }
+                        }
+                        while (checker != true)
+                        {
+                            pointToConnect = rnd.Next(pointsContainer[index].Points.Count);
+                            if (pointsContainer[index].Points[pointToConnect].ConnectedPoint != null)
+                            {
+                                checker = false;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        container.Points[i].ConnectedPoint = pointsContainer[index].Points[pointToConnect];
+                        pointsContainer[index].Points[pointToConnect] = container.Points[i].ConnectedPoint;
+                        container.ConnectedBuckets.Add(pointsContainer[index]);
+                        pointsContainer[index].ConnectedBuckets.Add(container);
+                    }
+                }
+            }
+            List<int> indexesOfConnectedVertices = new List<int>();
+            foreach (var container in pointsContainer)
+            {
+                foreach (var bucket in container.ConnectedBuckets)
+                {
+                    indexesOfConnectedVertices.Add(bucket.Id);
+                }
+                //for (int i = 0; i < indexesOfConnectedVertices.Count; i++)
+                //{
+                //    ListOfEdges.Add(new Edge
+                //    {
+                //        StartPoint = ListOfVertices[container.Id],
+                //        EndPoint = ListOfVertices[indexesOfConnectedVertices[i]]
+                //    });
+                //}
+                foreach (var item in indexesOfConnectedVertices)
+                {
+                    ListOfEdges.Add(new Edge
+                    {
+                        StartPoint = ListOfVertices[container.Id],
+                        EndPoint = ListOfVertices[item]
+                    });
+                }
+                indexesOfConnectedVertices.Clear();
             }
         }
         public static void ShowMatrix(int[,] matrix)
@@ -190,10 +282,13 @@ namespace grefy_testy
         }
         public void ShowEdges()
         {
+            int counter = 0;
             foreach (var item in ListOfEdges)
             {
+                Console.WriteLine("Krawędź: {0}", counter);
                 Console.WriteLine($"Start Point = {item.StartPoint}");
                 Console.WriteLine($"End Point = {item.EndPoint}");
+                counter++;
             }
         }
     }
@@ -204,10 +299,11 @@ namespace grefy_testy
             var g1 = Graph.GenerateGraph(10);
             //Console.WriteLine(g1);
             //var g = g1.GenerateMatrix(5);
-            var g = g1.GenerateAjacenceMatrixBeta(3);
-            Graph.ShowMatrix(g);
-            Console.WriteLine();
-            g1.GenerateEdges(g);
+            //var g = g1.GenerateAjacenceMatrixBeta(3);
+            //Graph.ShowMatrix(g);
+            //Console.WriteLine();
+            //g1.GenerateEdges(g);
+            g1.GenerateEdgesOfRegularGraph(4, 2);
             g1.ShowEdges();
         }
     }
