@@ -168,8 +168,9 @@ namespace grefy_testy
         static IEnumerable<int> range;
         static bool checker = false;
         HashSet<int> excludeBucketIndex = new HashSet<int>();
-        public void GenerateEdgesOfRegularGraph(int numOfVertices, int degree, Graph g)
+        public bool GenerateEdgesOfRegularGraph(int numOfVertices, int degree, Graph g)
         {
+            bool checkStop;
             bool checkFree;
             int numberOfEdges = (numOfVertices * degree) / 2;
             range = Enumerable.Range(0, degree);
@@ -224,7 +225,7 @@ namespace grefy_testy
 
                                     Console.ReadKey();
                                     checker = true;
-                                    g.GenerateEdgesOfRegularGraph(numOfVertices, degree, g);
+                                    return false;
 
                                 }
 
@@ -314,6 +315,7 @@ namespace grefy_testy
                 }
                 indexesOfConnectedVertices.Clear();
             }
+            return true;
         }
         public static bool CheckFreeVertices(Bucket[] bucketCollection, int degree)
         {
@@ -420,13 +422,17 @@ namespace grefy_testy
             var sw = new Stopwatch();
             sw.Start();
             var g1 = Graph.GenerateGraph(10);
+            bool isDrawn = false;
             //Console.WriteLine(g1);
             //var g = g1.GenerateMatrix(5);
             //var g = g1.GenerateAjacenceMatrixBeta(3);
             //Graph.ShowMatrix(g);
             //Console.WriteLine();
             //g1.GenerateEdges(g);
-            g1.GenerateEdgesOfRegularGraph(6, 3, g1);
+            while (isDrawn == false)
+            {
+                isDrawn = g1.GenerateEdgesOfRegularGraph(10, 9, g1);
+            }
             g1.ShowEdges();
             sw.Stop();
             Console.WriteLine(sw.ElapsedMilliseconds);
