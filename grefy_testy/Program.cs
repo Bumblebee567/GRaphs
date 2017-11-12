@@ -213,20 +213,26 @@ namespace grefy_testy
                             }
                             else
                             {
-                                Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine("Nie ma koszyków z którymi się można połączyć");
-                                Console.ResetColor();
-                                Console.ForegroundColor = ConsoleColor.Blue;
-                                Console.WriteLine("Wywołuję metodę od początku, kliknij coś");
-                                Console.ResetColor();
+                                if (pointsContainers.Any(x => x.ConnectedBuckets.Count < degree))
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine("Nie ma koszyków z którymi się można połączyć");
+                                    Console.ResetColor();
+                                    Console.ForegroundColor = ConsoleColor.Blue;
+                                    Console.WriteLine("Wywołuję metodę od początku, kliknij coś");
+                                    Console.ResetColor();
 
-                                Console.ReadKey();
-                                g.GenerateEdgesOfRegularGraph(numOfVertices, degree, g);
+                                    Console.ReadKey();
+                                    checker = true;
+                                    g.GenerateEdgesOfRegularGraph(numOfVertices, degree, g);
+
+                                }
+
                             }
                             excludeBucketIndex.Add(Array.IndexOf(pointsContainers, container));
                             //range = Enumerable.Range(0, numOfVertices - 1).Where(x => !excludeBucketIndex.Contains(x));
                             index = rnd.Next(0, numOfVertices); //index losowego koszyka, różnego od obecnego
-                            
+
                             Console.WriteLine("wylosowany index kontenera: {0}", index);
                             if (index == container.Id)
                             {
@@ -279,7 +285,7 @@ namespace grefy_testy
                         pointsContainers[index].Points[pointToConnect] = container.Points[i].ConnectedPoint;
                         container.ConnectedBuckets.Add(pointsContainers[index]);
                         pointsContainers[index].ConnectedBuckets.Add(container);
-                        //dopisać metody: 1. sprawdzająca, czy można się połączyć z JAKIMKOLWIEK bucketem (przez to się sypie)
+                        //dopisać metody: 
                         //                2. poprawić generowanie krawędzi - źle działa (niepoprawna ilość)
                     }
                 }
@@ -303,7 +309,7 @@ namespace grefy_testy
                     }
                     catch (Exception e)
                     {
-                        
+
                     }
                 }
                 indexesOfConnectedVertices.Clear();
@@ -312,15 +318,42 @@ namespace grefy_testy
         public static bool CheckFreeVertices(Bucket[] bucketCollection, int degree)
         {
             int counter = 0;
+            int degreeCounter = 0;
+            bool checker = false;
+            List<Bucket> bucketsWithoutMaximalDegree = new List<Bucket>();
             foreach (var bucket in bucketCollection)
             {
                 if (bucket.ConnectedBuckets.Count == degree)
                 {
                     counter++;
                 }
+                else
+                {
+                    degreeCounter++;
+                    bucketsWithoutMaximalDegree.Add(bucket);
+                }
             }
-            if (counter == bucketCollection.Length-1)
+            if (bucketsWithoutMaximalDegree.Count == 2)
             {
+                if (bucketsWithoutMaximalDegree[0].ConnectedBuckets.Contains(bucketsWithoutMaximalDegree[1]) && bucketsWithoutMaximalDegree[1].ConnectedBuckets.Contains(bucketsWithoutMaximalDegree[0]))
+                {
+                    checker = false;
+                    Console.WriteLine("KLESZCZE - WSZYTSKIE MINIMUM 2 KRAWĘDZIE I NIE DA SIĘ DALEJ IŚĆ");
+                    Console.ReadKey();
+                    return false;
+                }
+            }
+            if (counter == bucketCollection.Length - 1)
+            {
+                return false;
+            }
+            else if (counter == degree - 2 && checker == true)
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("Zagłodzenie - resetuję (naciśnij coś)");
+                Console.ResetColor();
+                Console.ReadKey();
+                bucketsWithoutMaximalDegree.Clear();
                 return false;
             }
             else
@@ -329,12 +362,13 @@ namespace grefy_testy
                 Console.WriteLine("Liczba pełnych wierzchołków: {0}", counter);
                 //zwrócić Tupla zawierającego boola i counter, jeśli counter == degree-2 - od poczatku
                 Console.ResetColor();
+                bucketsWithoutMaximalDegree.Clear();
                 return true;
             }
         }
         public static bool CheckIfThereIsConnection(Bucket b1, Bucket b2)
         {
-            if(b1.ConnectedBuckets.Contains(b2) || b2.ConnectedBuckets.Contains(b1))
+            if (b1.ConnectedBuckets.Contains(b2) || b2.ConnectedBuckets.Contains(b1))
             {
                 return true;
             }
