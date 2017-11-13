@@ -291,30 +291,52 @@ namespace grefy_testy
                     }
                 }
             }
-            List<int> indexesOfConnectedVertices = new List<int>();
+            //List<int> indexesOfConnectedVertices = new List<int>();
+            //foreach (var container in pointsContainers)
+            //{
+            //    foreach (var bucket in container.ConnectedBuckets)
+            //    {
+            //        indexesOfConnectedVertices.Add(bucket.Id);
+            //    }
+            //    foreach (var item in indexesOfConnectedVertices)
+            //    {
+            //        try
+            //        {
+            //            ListOfEdges.Add(new Edge
+            //            {
+            //                StartPoint = ListOfVertices[container.Id],
+            //                EndPoint = ListOfVertices[item]
+            //            });
+            //        }
+            //        catch (Exception e)
+            //        {
+
+            //        }
+            //    }
+            //    indexesOfConnectedVertices.Clear();
+            //}
             foreach (var container in pointsContainers)
             {
-                foreach (var bucket in container.ConnectedBuckets)
+                for (int i = 0; i < container.ConnectedBuckets.Count; i++)
                 {
-                    indexesOfConnectedVertices.Add(bucket.Id);
-                }
-                foreach (var item in indexesOfConnectedVertices)
-                {
-                    try
+                    ListOfEdges.Add(new Edge
                     {
-                        ListOfEdges.Add(new Edge
-                        {
-                            StartPoint = ListOfVertices[container.Id],
-                            EndPoint = ListOfVertices[item]
-                        });
-                    }
-                    catch (Exception e)
-                    {
-
-                    }
+                        StartPoint = ListOfVertices[Array.IndexOf(pointsContainers, container)],
+                        EndPoint = ListOfVertices[Array.IndexOf(pointsContainers, container.ConnectedBuckets[i])]
+                    });
                 }
-                indexesOfConnectedVertices.Clear();
             }
+            //List<Edge> listOfDupliciedEdges = new List<Edge>();
+            //IEnumerable<Edge> query;
+            //foreach (var item in ListOfEdges)
+            //{
+            //    query = ListOfEdges.Where(x => x.EndPoint == item.StartPoint);
+            //    listOfDupliciedEdges.AddRange(query);
+            //}
+            //foreach (var item in listOfDupliciedEdges)
+            //{
+            //    ListOfEdges.Remove(item);
+            //}
             return true;
         }
         public static bool CheckFreeVertices(Bucket[] bucketCollection, int degree)
@@ -431,8 +453,10 @@ namespace grefy_testy
             //g1.GenerateEdges(g);
             while (isDrawn == false)
             {
-                isDrawn = g1.GenerateEdgesOfRegularGraph(10, 9, g1);
+                isDrawn = g1.GenerateEdgesOfRegularGraph(8, 4, g1);
             }
+            Console.WriteLine(g1.ListOfEdges.Count());
+            Console.ReadKey(); 
             g1.ShowEdges();
             sw.Stop();
             Console.WriteLine(sw.ElapsedMilliseconds);
