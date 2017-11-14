@@ -324,6 +324,9 @@ namespace grefy_testy
                         StartPoint = ListOfVertices[Array.IndexOf(pointsContainers, container)],
                         EndPoint = ListOfVertices[Array.IndexOf(pointsContainers, container.ConnectedBuckets[i])]
                     });
+                    var bucketToDelete = container.ConnectedBuckets[i].ConnectedBuckets.Where(x => x.Id == container.Id).First();
+                    container.ConnectedBuckets[i].ConnectedBuckets.Remove(bucketToDelete);
+                    Console.WriteLine("Bucket has been removed");
                 }
             }
             //List<Edge> listOfDupliciedEdges = new List<Edge>();
