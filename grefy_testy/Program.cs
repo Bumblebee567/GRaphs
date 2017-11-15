@@ -329,17 +329,6 @@ namespace grefy_testy
                     Console.WriteLine("Bucket has been removed");
                 }
             }
-            //List<Edge> listOfDupliciedEdges = new List<Edge>();
-            //IEnumerable<Edge> query;
-            //foreach (var item in ListOfEdges)
-            //{
-            //    query = ListOfEdges.Where(x => x.EndPoint == item.StartPoint);
-            //    listOfDupliciedEdges.AddRange(query);
-            //}
-            //foreach (var item in listOfDupliciedEdges)
-            //{
-            //    ListOfEdges.Remove(item);
-            //}
             return true;
         }
         public static bool CheckFreeVertices(Bucket[] bucketCollection, int degree)
@@ -445,7 +434,6 @@ namespace grefy_testy
         static void Main(string[] args)
         {
             var sw = new Stopwatch();
-            sw.Start();
             var g1 = Graph.GenerateGraph(10);
             bool isDrawn = false;
             //Console.WriteLine(g1);
@@ -454,9 +442,23 @@ namespace grefy_testy
             //Graph.ShowMatrix(g);
             //Console.WriteLine();
             //g1.GenerateEdges(g);
+            sw.Start();
+            long s = 0;
             while (isDrawn == false)
             {
                 isDrawn = g1.GenerateEdgesOfRegularGraph(8, 4, g1);
+                sw.Stop();
+                s = sw.ElapsedMilliseconds;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Time: {0}", s);
+                Console.ResetColor();
+                if(s > 10000)
+                {
+                    Console.WriteLine("Wywalam pętlę");
+                    Console.ReadKey();
+                    break;
+                }
+                sw.Start();
             }
             Console.WriteLine(g1.ListOfEdges.Count());
             Console.ReadKey(); 
