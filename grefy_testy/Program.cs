@@ -191,39 +191,39 @@ namespace grefy_testy
             //kontenery z punktami zrobione
             foreach (var container in pointsContainers)
             {
-                Console.WriteLine("Kontener: {0}", container.Id);
+                //Console.WriteLine("Kontener: {0}", container.Id);
                 for (int i = 0; i < degree; i++)
                 {
                     if (container.Points[i].IsConnected == true)
                     {
-                        Console.WriteLine("Punkt {0} w koszyku {1} jest już połączony", container.Points[i].Id, Array.IndexOf(pointsContainers, container));
+                        //Console.WriteLine("Punkt {0} w koszyku {1} jest już połączony", container.Points[i].Id, Array.IndexOf(pointsContainers, container));
                         continue;
                     }
                     else
                     {
                         while (checker != true)
                         {
-                            Console.WriteLine("Punkt {0} w koszyku {1} nie jest połączony", container.Points[i].Id, Array.IndexOf(pointsContainers, container));
+                            //Console.WriteLine("Punkt {0} w koszyku {1} nie jest połączony", container.Points[i].Id, Array.IndexOf(pointsContainers, container));
                             //Console.ReadKey();
                             checkFree = CheckFreeVertices(pointsContainers, degree);
                             if (checkFree == true && _CheckIfConnectionFromBucketIsPossible(container, pointsContainers, degree) == true)
                             {
-                                Console.ForegroundColor = ConsoleColor.Green;
-                                Console.WriteLine("Są koszyki z którymi się można połączyć");
-                                Console.ResetColor();
+                                //Console.ForegroundColor = ConsoleColor.Green;
+                                //Console.WriteLine("Są koszyki z którymi się można połączyć");
+                                //Console.ResetColor();
                             }
                             else
                             {
                                 if (pointsContainers.Any(x => x.ConnectedBuckets.Count < degree))
                                 {
-                                    Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine("Nie ma koszyków z którymi się można połączyć");
-                                    Console.ResetColor();
-                                    Console.ForegroundColor = ConsoleColor.Blue;
-                                    Console.WriteLine("Wywołuję metodę od początku, kliknij coś");
-                                    Console.ResetColor();
+                                    //Console.ForegroundColor = ConsoleColor.Red;
+                                    //Console.WriteLine("Nie ma koszyków z którymi się można połączyć");
+                                    //Console.ResetColor();
+                                    //Console.ForegroundColor = ConsoleColor.Blue;
+                                    //Console.WriteLine("Wywołuję metodę od początku, kliknij coś");
+                                    //Console.ResetColor();
 
-                                    Console.ReadKey();
+                                    //Console.ReadKey();
                                     checker = true;
                                     return false;
 
@@ -234,15 +234,15 @@ namespace grefy_testy
                             //range = Enumerable.Range(0, numOfVertices - 1).Where(x => !excludeBucketIndex.Contains(x));
                             index = rnd.Next(0, numOfVertices); //index losowego koszyka, różnego od obecnego
 
-                            Console.WriteLine("wylosowany index kontenera: {0}", index);
+                            //Console.WriteLine("wylosowany index kontenera: {0}", index);
                             if (index == container.Id)
                             {
-                                Console.WriteLine("wylosowano taki sam kontener jak obecny");
+                                //Console.WriteLine("wylosowano taki sam kontener jak obecny");
                                 checker = false;
                             }
                             else if (pointsContainers[index].Points.All(x => x.IsConnected == true))
                             {
-                                Console.WriteLine("wszystkie punkty w wylosowanym kontenerze są już połączone");
+                                //Console.WriteLine("wszystkie punkty w wylosowanym kontenerze są już połączone");
                             }
                             else
                             {
@@ -259,12 +259,12 @@ namespace grefy_testy
                         checker = false;
                         while (checker != true)
                         {
-                            Console.WriteLine("Szukam punktu do połączenia");
+                            //Console.WriteLine("Szukam punktu do połączenia");
                             pointToConnect = rnd.Next(pointsContainers[index].Points.Count);
-                            Console.WriteLine("wylosowany punkt do połączenia: {0}", pointsContainers[index].Points[pointToConnect].Id);
+                            //Console.WriteLine("wylosowany punkt do połączenia: {0}", pointsContainers[index].Points[pointToConnect].Id);
                             if (pointsContainers[index].Points[pointToConnect].IsConnected == true)
                             {
-                                Console.WriteLine("Wylosowany punkt jest już połączony");
+                                //Console.WriteLine("Wylosowany punkt jest już połączony");
                                 checker = false;
                             }
                             else
@@ -301,7 +301,7 @@ namespace grefy_testy
                     });
                     var bucketToDelete = container.ConnectedBuckets[i].ConnectedBuckets.Where(x => x.Id == container.Id).First();
                     container.ConnectedBuckets[i].ConnectedBuckets.Remove(bucketToDelete);
-                    Console.WriteLine("Bucket has been removed");
+                    //Console.WriteLine("Bucket has been removed");
                 }
             }
             return true;
@@ -348,8 +348,8 @@ namespace grefy_testy
                 if (bucketsWithoutMaximalDegree[0].ConnectedBuckets.Contains(bucketsWithoutMaximalDegree[1]) && bucketsWithoutMaximalDegree[1].ConnectedBuckets.Contains(bucketsWithoutMaximalDegree[0]))
                 {
                     checker = false;
-                    Console.WriteLine("KLESZCZE - WSZYTSKIE MINIMUM 2 KRAWĘDZIE I NIE DA SIĘ DALEJ IŚĆ");
-                    Console.ReadKey();
+                    //Console.WriteLine("KLESZCZE - WSZYTSKIE MINIMUM 2 KRAWĘDZIE I NIE DA SIĘ DALEJ IŚĆ");
+                    //Console.ReadKey();
                     return false;
                 }
             }
@@ -359,19 +359,19 @@ namespace grefy_testy
             }
             else if (counter == degree - 2 && checker == true)
             {
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine("Zagłodzenie - resetuję (naciśnij coś)");
-                Console.ResetColor();
-                Console.ReadKey();
+                //Console.ForegroundColor = ConsoleColor.Cyan;
+                //Console.WriteLine("Zagłodzenie - resetuję (naciśnij coś)");
+                //Console.ResetColor();
+                //Console.ReadKey();
                 bucketsWithoutMaximalDegree.Clear();
                 return false;
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine("Liczba pełnych wierzchołków: {0}", counter);
+                //Console.ForegroundColor = ConsoleColor.Cyan;
+                //Console.WriteLine("Liczba pełnych wierzchołków: {0}", counter);
                 //zwrócić Tupla zawierającego boola i counter, jeśli counter == degree-2 - od poczatku
-                Console.ResetColor();
+                //Console.ResetColor();
                 bucketsWithoutMaximalDegree.Clear();
                 return true;
             }
