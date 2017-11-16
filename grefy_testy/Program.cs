@@ -316,7 +316,7 @@ namespace grefy_testy
                     counter++;
                 }
             }
-            if(counter == bucketCollection.Count())
+            if(counter == bucketCollection.Count() - 1)
             {
                 return false;
             }
@@ -441,18 +441,18 @@ namespace grefy_testy
             while (isDrawn == false)
             {
                 isDrawn = g1.GenerateEdgesOfRegularGraph(8, 4, g1);
-                sw.Stop();
-                s = sw.ElapsedMilliseconds;
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("Time: {0}", s);
-                Console.ResetColor();
-                if(s > 10000)
-                {
-                    Console.WriteLine("Wywalam pętlę");
-                    Console.ReadKey();
-                    break;
-                }
-                sw.Start();
+                //sw.Stop();
+                //s = sw.ElapsedMilliseconds;
+                //Console.ForegroundColor = ConsoleColor.Yellow;
+                //Console.WriteLine("Time: {0}", s);
+                //Console.ResetColor();
+                //if(s > 10000)
+                //{
+                //    Console.WriteLine("Wywalam pętlę");
+                //    Console.ReadKey();
+                //    break;
+                //}
+                //sw.Start();
             }
             Console.WriteLine(g1.ListOfEdges.Count());
             Console.ReadKey(); 
