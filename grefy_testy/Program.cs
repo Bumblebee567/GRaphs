@@ -206,7 +206,7 @@ namespace grefy_testy
                             Console.WriteLine("Punkt {0} w koszyku {1} nie jest połączony", container.Points[i].Id, Array.IndexOf(pointsContainers, container));
                             //Console.ReadKey();
                             checkFree = CheckFreeVertices(pointsContainers, degree);
-                            if (checkFree == true)
+                            if (checkFree == true && _CheckIfConnectionFromBucketIsPossible(container, pointsContainers, degree) == true)
                             {
                                 Console.ForegroundColor = ConsoleColor.Green;
                                 Console.WriteLine("Są koszyki z którymi się można połączyć");
@@ -286,35 +286,10 @@ namespace grefy_testy
                         pointsContainers[index].Points[pointToConnect] = container.Points[i].ConnectedPoint;
                         container.ConnectedBuckets.Add(pointsContainers[index]);
                         pointsContainers[index].ConnectedBuckets.Add(container);
-                        //dopisać metody: 
-                        //                2. poprawić generowanie krawędzi - źle działa (niepoprawna ilość)
                     }
                 }
             }
-            //List<int> indexesOfConnectedVertices = new List<int>();
-            //foreach (var container in pointsContainers)
-            //{
-            //    foreach (var bucket in container.ConnectedBuckets)
-            //    {
-            //        indexesOfConnectedVertices.Add(bucket.Id);
-            //    }
-            //    foreach (var item in indexesOfConnectedVertices)
-            //    {
-            //        try
-            //        {
-            //            ListOfEdges.Add(new Edge
-            //            {
-            //                StartPoint = ListOfVertices[container.Id],
-            //                EndPoint = ListOfVertices[item]
-            //            });
-            //        }
-            //        catch (Exception e)
-            //        {
 
-            //        }
-            //    }
-            //    indexesOfConnectedVertices.Clear();
-            //}
             foreach (var container in pointsContainers)
             {
                 for (int i = 0; i < container.ConnectedBuckets.Count; i++)
@@ -330,6 +305,25 @@ namespace grefy_testy
                 }
             }
             return true;
+        }
+        private static bool _CheckIfConnectionFromBucketIsPossible(Bucket checkedBucket, Bucket[] bucketCollection, int degree)
+        {
+            var counter = 0;
+            foreach (var bucket in bucketCollection)
+            {
+                if(bucket.ConnectedBuckets.Count == degree || bucket.ConnectedBuckets.Contains(checkedBucket))
+                {
+                    counter++;
+                }
+            }
+            if(counter == bucketCollection.Count())
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
         public static bool CheckFreeVertices(Bucket[] bucketCollection, int degree)
         {
