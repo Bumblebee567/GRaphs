@@ -22,6 +22,7 @@ namespace grefy_testy
         {
             return $"x: {X} y: {Y}";
         }
+        public List<Vertex> ConnectedVertices = new List<Vertex>();
     }
     class Point
     {
@@ -301,6 +302,7 @@ namespace grefy_testy
                     });
                     var bucketToDelete = container.ConnectedBuckets[i].ConnectedBuckets.Where(x => x.Id == container.Id).First();
                     container.ConnectedBuckets[i].ConnectedBuckets.Remove(bucketToDelete);
+                    ListOfVertices[Array.IndexOf(pointsContainers, container)].ConnectedVertices.Add(ListOfVertices[Array.IndexOf(pointsContainers, container.ConnectedBuckets[i])]);
                     //Console.WriteLine("Bucket has been removed");
                 }
             }
@@ -428,7 +430,7 @@ namespace grefy_testy
         static void Main(string[] args)
         {
             var sw = new Stopwatch();
-            var g1 = Graph.GenerateGraph(10);
+            var g1 = Graph.GenerateGraph(8);
             bool isDrawn = false;
             //Console.WriteLine(g1);
             //var g = g1.GenerateMatrix(5);
@@ -457,6 +459,14 @@ namespace grefy_testy
             Console.WriteLine(g1.ListOfEdges.Count());
             Console.ReadKey(); 
             g1.ShowEdges();
+            foreach (var item in g1.ListOfVertices)
+            {
+                Console.WriteLine("Wierzchołek: {0}", item.Id);
+                for (int i = 0; i < item.ConnectedVertices.Count; i++)
+                {
+                    Console.WriteLine(item.ConnectedVertices[i].Id);
+                }
+            }
             sw.Stop();
             Console.WriteLine(sw.ElapsedMilliseconds);
         }
